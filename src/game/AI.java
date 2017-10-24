@@ -20,6 +20,38 @@ public class AI {
 	public void setBoard(GOLBoard board) {
 		this.board = board;
 	}
+	/*
+	 * huihqgipteiprtuhqtgiuprtw iubh
+	 * wh bjo[jn
+	 * yermjnr
+	 * rjenupyktn jyhy
+	 * etjnpytej
+	 * ju p
+	 * yetj m
+	 * pteymj 
+	 * ptyejm p
+	 * twykm p
+	 * ytwj
+	 *  ophgtjke
+	 *  [o ekty
+	 *  po jetykj
+	 *   yetjk 
+	 *   ypteok j
+	 *   pytej 
+	 *   ope6t
+	 *   rjgb]wjrt oithw
+	 *    q
+	 *    br HQre
+	 *    
+	 *    brhbt 
+	 *    
+	 *    b wr
+	 *    ibh rw
+	 *    b h
+	 *    bi hwbjo
+	 *    wet 
+	 *    biptrh biph tre
+	 */
 	public int[] findKill(boolean ownCell, int dontKillX, int dontKillY, int dontKillX2, int dontKillY2) {
 		int[][] research = new int[400][3]; //contains the findings of each iteration of the loop
 		for(int i = 0; i < board.getSize(); i ++) {
