@@ -9,10 +9,10 @@ public class GOLMain {
 		GOLFrame frame = new GOLFrame();
 		GOLBoard board = new GOLBoard();
 		GOLCanvas canvas = new GOLCanvas();
-		AI ai = new AI();
 		Tutorial tutorial = new Tutorial();
-		boolean HasFinalWinner = false;
+		AI ai = new AI();
 		ai.setBoard(board);
+		boolean HasFinalWinner = false;
 		frame.addCanvas(canvas);
 		canvas.addEventQueue(queue);
 		canvas.setBoard(board);
@@ -24,6 +24,7 @@ public class GOLMain {
 			if(!canvas.inSplash() & !canvas.inSelection()) {
 				Object[] options = {"ok"};
 				if(board.isWinner(1) & !board.isDraw() & !tutorial.isActive()) {
+					System.out.println("WINNER");
 					board.incrementWin(1);
 					if(board.shouldExit() == 1){
 						canvas.setSplash(true);
@@ -40,6 +41,7 @@ public class GOLMain {
 				}
 				if(board.isWinner(2) & !board.isDraw() & !tutorial.isActive()) {
 					board.incrementWin(2);
+					System.out.println("WINNER");
 					if(board.shouldExit() == 2){
 						canvas.setSplash(true);
 						HasFinalWinner = true;
@@ -63,13 +65,13 @@ public class GOLMain {
 						board.mirrorBoard();
 					} else if(event.getType() == GOLEvent.EVENT_MOUSE_BUTTON_PRESS & event.isMouseLeftButton()) {
 						if(board.getBoard(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10))) == 1 & event.getMouseX()/(100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize() || board.getBoard(event.getMouseX()/(100/(board.getSize()/10)),event.getMouseY()/(100/(board.getSize()/10))) == 2 & event.getMouseX()/ (100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize()) {
-							board.kill(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), true, false);
+							board.kill(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), true, false,false);
 						}else if(event.getMouseX() >= 1075 & event.getMouseX() <= 1402 & event.getMouseY() >= 600 & event.getMouseY() <= 754) {
 							if(board.endTurn(board.isAdmin())) {
 								board.setCycle(true);
 							}
 						}else if(event.getMouseX()/ (100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize()){
-							board.revive(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), board.getplayer(), true);
+							board.revive(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), board.getplayer(), true, false);
 						}else if(event.getMouseX() >= 1050 & event.getMouseX() <= 1441 & event.getMouseY() >= 800 & event.getMouseY() <= 929) {
 							canvas.setSplash(true);
 						} else if(event.getMouseX() >= 1100 & event.getMouseX() <= 1166 & event.getMouseY() >= 500 & event.getMouseY() <= 562 & board.isActive(1)) {
@@ -79,9 +81,8 @@ public class GOLMain {
 						}
 					} else if(event.getType() == GOLEvent.EVENT_KEY_PRESS & event.getKeyChar() == 'z') {
 						board.undo();
-						System.out.println("HI");
 					} else if(event.getType() == GOLEvent.EVENT_KEY_PRESS & event.getKeyChar() == 'a') {
-						//ai.makeMove();
+						ai.makeMove();
 					}
 				} 
 				board.uptateDebt();

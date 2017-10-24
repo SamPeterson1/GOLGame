@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Image;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -114,16 +115,30 @@ public class GOLBoard {
 		this.currentImageRedo = this.grayRedo;
 		this.currentImageUndo = this.grayUndo;
 	}
+	public void incrementKillCount() {
+		killCount ++;
+	}
 	public boolean isAdmin() {
 		return this.isAdmin;
+	}
+	public int[][] get(){
+		int[][] retVal = new int[20][20];
+		for(int i = 0; i < 20; i ++) {
+			retVal[i] = Arrays.copyOf(board[i], board[i].length);
+		}
+		return retVal;
+	}
+	public void resetKillCount() {
+		this.killCount = 0;
+		this.reviveCount = 0;
 	}
 	public void setTurn(int turn) {
 		this.player = turn;
 	}
 	public void setBoard(int[][] board) {
-		for(int i = 0; i < this.size; i ++) {
-			this.board[i] = board[i].clone();
-		}
+			for(int i = 0; i < 20; i ++) {
+				this.board[i] = Arrays.copyOf(board[i], board[i].length);
+			}
 	}
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
@@ -160,18 +175,7 @@ public class GOLBoard {
 		}
 		return 0;
 	}
-	public boolean makeMove(int x, int y, int color, boolean revive) {
-		int a = board[y][x];
-		if(revive) {
-			this.revive(x, y, color, true);
-		} else {
-			System.out.println("KIll");
-			this.kill(x, y, true,false);
-		}
-		return (a != board[y][x]);
-	}
 	public boolean finish(){
-		System.out.println("HI");
 		int a = this.player;
 		this.endTurn(false);
 		return (a!= player);
@@ -194,23 +198,26 @@ public class GOLBoard {
 		this.winMode = mode;
 	}
 	public int shouldExit() {
-		System.out.printf("mode %d blue wins %d red wins %d win point %d", this.winMode, this.winBlue, this.winRed, this.winPoint);
-		if(this.winMode == this.ONE_ROUND & winBlue == 1) {
+		if(this.winMode == this.ONE_ROUND & winBlue >= 1) {
 			return 1;
-		} else if(this.winMode == this.ONE_ROUND & winRed == 1) {
+		} else if(this.winMode == this.ONE_ROUND & winRed >= 1) {
 			return 2;
-		} else if(this.winMode == this.BEST_OF_THREE & winBlue == 2){
+		} else if(this.winMode == this.BEST_OF_THREE & winBlue >= 2){
 			return 1;
-		} else if(this.winMode == this.BEST_OF_THREE & winRed == 2) {
+		} else if(this.winMode == this.BEST_OF_THREE & winRed >= 2) {
 			return 2;
-		} else if(this.winMode == this.BEST_OF_FIVE & winBlue == 3) {
+		} else if(this.winMode == this.BEST_OF_FIVE & winBlue >= 3) {
 			return 1;
-		} else if( this.winMode == this.BEST_OF_FIVE & winRed == 3) {
+		} else if( this.winMode == this.BEST_OF_FIVE & winRed >= 3) {
 			return 2;
-		} else if(this.winMode == this.FIRST_TO_SCORE & winBlue == winPoint) {
+		} else if(this.winMode == this.FIRST_TO_SCORE & winBlue >= winPoint) {
+			System.out.println("WINNER CONfiRMED 1");
 			return 1;
-		} else if(this.winMode == this.FIRST_TO_SCORE & winRed == winPoint) {
+		} else if(this.winMode == this.FIRST_TO_SCORE & winRed >= winPoint) {
+			System.out.println("WINNER CONfiRMED 2");
 			return 2;
+		} else {
+			System.out.println(winRed + " " + winBlue);
 		}
 		return 0;
 	}
@@ -238,7 +245,7 @@ public class GOLBoard {
 		}
 		return false;
 	}
-	private void returnDebt() {
+	public void returnDebt() {
 		if(debt != 0) {
 			debt --;
 		}
@@ -249,12 +256,13 @@ public class GOLBoard {
 	public int getplayer() {
 		return this.player;
 	}
-	public void kill(int x, int y, boolean isPlayer, boolean byAi) {
-		System.out.printf("allows killing: %b isPlayer: %b Debt: %d KillCount: %d \n", allowKilling, isPlayer, debt, killCount);
+	public boolean kill(int x, int y, boolean isPlayer, boolean byAi, boolean isLegit) {
+		if(byAi) {
+			System.out.println("KILL" + x + " " + y);
+		}
+		//System.out.printf("allow killing: %b is player: %b debt: %d killCount: %d player: %d board: %d \n", allowKilling, isPlayer, debt, killCount, player, board[y][x]);
 		if(this.allowKilling || !isPlayer) {
-			System.out.printf("Debt: %d KillCount: %d \n", debt, killCount);
-			if(debt == 0 & killCount == 0) {
-				System.out.println("hHHHHHHHHHHHHHHHHHHHHHhhhHHHHhhhhHHHHhhh");
+			if(debt == 0 & killCount == 0 || isLegit) {
 				int color = this.getBoard(x, y);
 				killCount ++;
 				this.board[y][x] = 0;
@@ -268,9 +276,10 @@ public class GOLBoard {
 				lastMove[1] = y;
 				lastMove[2] = 1;
 				lastMove[3] = color;
-				System.out.println(killCount);
+				return true;
 			}
-			if(board[y][x] == player & killCount == 0) {
+			if(board[y][x] == player & killCount == 0 || isLegit) {
+				//System.out.println("ACCEPTED");
 				int color = this.getBoard(x, y);
 				this.returnDebt();
 				this.board[y][x] = 0;
@@ -278,12 +287,14 @@ public class GOLBoard {
 				lastMove[1] = y;
 				lastMove[2] = 1;
 				lastMove[3] = color;
+				return true;
 			}
 			if(!isPlayer) {
-				System.out.println("NOT THE AI" + x + " " + y);
 				this.board[y][x] = 0;
+				return true;
 			}
 		}
+		return false;
 	}
 	public boolean isDraw() {
 		int a = this.getTiles(1);
@@ -293,8 +304,8 @@ public class GOLBoard {
 		}
 		return false;
 	}
-	public void revive(int x, int y, int color, boolean byPlayer) {
-		if(this.allowRevive || !byPlayer) {
+	public boolean revive(int x, int y, int color, boolean byPlayer, boolean legit) {
+		if(this.allowRevive || !byPlayer || legit) {
 			if(debt == 0 & board[y][x] == 0 & killCount == 0 & reviveCount == 0) {
 				this.board[y][x] = color;
 				this.debtCell[0] = x;
@@ -311,10 +322,16 @@ public class GOLBoard {
 				lastMove[2] = 2;
 				lastMove[3] = color;
 				reviveCount ++;
+				return true;
 			} else if(byPlayer == false) {
 				this.board[y][x] = color;
+				return true;
 			}
 		}
+		return false;
+	}
+	public void setDebt() {
+		this.debt = 2;
 	}
 	public void uptateDebt() {
 		if(board[debtCell[1]][debtCell[0]] == 0) {
@@ -337,11 +354,11 @@ public class GOLBoard {
 			currentImageRedo = redo;
 		}
 		if(lastMove[2] == 2) {
-			this.kill(lastMove[0], lastMove[1], false, false);
+			this.kill(lastMove[0], lastMove[1], false, false, false);
 			reviveCount = 0;
 			lastMove[2] = 1;
 		} else {
-			this.revive(lastMove[0], lastMove[1], lastMove[3], false);
+			this.revive(lastMove[0], lastMove[1], lastMove[3], false, false);
 			killCount = 0;
 			lastMove[2] = 2;
 		}
@@ -372,7 +389,6 @@ public class GOLBoard {
 				predictions[i][j] = 0;
 			}
 		}
-		System.out.println(killCount + "THIS IS ME");
 	}
 	public void makeRevivePrediction(int x, int y, int color) {
 		this.predictions[y][x] = color;
@@ -606,17 +622,14 @@ REVIVE PREDICTED4 4
 		}
 		for(int i = 0; i < this.size; i ++) {
 			for(int j = 0; j < this.size; j ++) {
-				System.out.println(neighbors[i][j] + "halo");
 				if(neighbors[j][i] > 3) {
-					System.out.println("KILL");
-					this.kill(i,j,false,false);
+					this.kill(i,j,false,false,false);
 				}
 				else if(neighbors[j][i] < 2) {
-					System.out.println("KILL");
-					this.kill(i, j, false,false);
+					this.kill(i, j, false,false,false);
 				}
 				else if(neighbors[j][i] == 3) {
-					this.revive(i, j, toBe[j][i], false);
+					this.revive(i, j, toBe[j][i], false, false);
 				}
 			}
 		}
