@@ -13,7 +13,7 @@ public class GOLBoard {
 	private Image grayRedo = new ImageIcon(getClass().getResource("/assets/GrayRedo.png")).getImage();
 	private Image currentImageUndo = grayUndo;
 	private Image currentImageRedo = grayRedo;
-	private int player = 1;
+	private int player = 0;
 	private int debt = 0;
 	private int killCount = 0;
 	private int reviveCount = 0;
@@ -29,7 +29,7 @@ public class GOLBoard {
 	private boolean isAdmin = false;
 	private int winPoint = 0;
 	private int winMode = 0;
-	private int winBlue = 0;
+	private int winBlue = 1;
 	private int winRed = 0 ;
 	private int[] lastMove = {0,0,0,0}; //x y (kill/revive) color
 	private int[][]board = {
@@ -55,11 +55,11 @@ public class GOLBoard {
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	};
 	private int[][] request = {
+			{0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -441,6 +441,7 @@ public class GOLBoard {
 			}
 		}
 		mirrorBoard();
+		//board = request.clone();
 	}
 	public void setSize(int size) {
 		this.size = size;
