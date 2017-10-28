@@ -10,14 +10,6 @@ public class GOLMain {
 		GOLBoard board = new GOLBoard();
 		GOLCanvas canvas = new GOLCanvas();
 		Tutorial tutorial = new Tutorial();
-		int[][] val = {
-				{0,0,1,0,0},
-				{0,1,0,1,0},
-				{1,0,0,1,0},
-				{0,1,1,0,0},
-				{0,0,0,0,0},
-		};
-		PatternFilter filter1 = new PatternFilter(val);
 		AI ai = new AI();
 		ai.setBoard(board);
 		boolean HasFinalWinner = false;
@@ -31,7 +23,7 @@ public class GOLMain {
 		while(true) {
 			if(!canvas.inSplash() & !canvas.inSelection()) {
 				Object[] options = {"ok"};
-				// /*
+				/*
 				if(board.isWinner(1) & !board.isDraw() & !tutorial.isActive()) {
 					System.out.println("WINNER");
 					board.incrementWin(1);
@@ -68,7 +60,7 @@ public class GOLMain {
 					JOptionPane.showOptionDialog(null, "DRAW", "DRAW", JOptionPane.OK_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					canvas.setSplash(true);
 				}
-				// */
+				*/
 				if(queue.isEventToProcess()) {
 					event = queue.getEvent();
 					if(event.getType() == GOLEvent.EVENT_KEY_PRESS & event.getKeyChar() == 'f') {
@@ -77,7 +69,7 @@ public class GOLMain {
 						if(board.getBoard(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10))) == 1 & event.getMouseX()/(100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize() || board.getBoard(event.getMouseX()/(100/(board.getSize()/10)),event.getMouseY()/(100/(board.getSize()/10))) == 2 & event.getMouseX()/ (100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize()) {
 							board.kill(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), true, false,false);
 						}else if(event.getMouseX() >= 1075 & event.getMouseX() <= 1402 & event.getMouseY() >= 600 & event.getMouseY() <= 754) {
-							if(board.endTurn(board.isAdmin())) {
+							if(board.endTurn(true)) {
 								board.setCycle(true);
 							}
 						}else if(event.getMouseX()/ (100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize()){
@@ -95,7 +87,6 @@ public class GOLMain {
 						ai.makeMove();
 					}
 				} 
-				System.out.println(filter1.checkForPattern(board.getSize(), board.get())[0]);
 				board.uptateDebt();
 				board.predictLife();
 				canvas.draw();
