@@ -20,6 +20,7 @@ public class GOLMain {
 		board.setWinPoint(2);
 		board.setWinMode(board.FIRST_TO_SCORE);
 		canvas.setTutorial(tutorial);
+		ai.init();
 		while(true) {
 			if(!canvas.inSplash() & !canvas.inSelection()) {
 				Object[] options = {"ok"};
@@ -68,12 +69,16 @@ public class GOLMain {
 					} else if(event.getType() == GOLEvent.EVENT_MOUSE_BUTTON_PRESS & event.isMouseLeftButton()) {
 						if(board.getBoard(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10))) == 1 & event.getMouseX()/(100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize() || board.getBoard(event.getMouseX()/(100/(board.getSize()/10)),event.getMouseY()/(100/(board.getSize()/10))) == 2 & event.getMouseX()/ (100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize()) {
 							board.kill(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), true, false,false);
+							board.resetKillCount();
 						}else if(event.getMouseX() >= 1075 & event.getMouseX() <= 1402 & event.getMouseY() >= 600 & event.getMouseY() <= 754) {
 							if(board.endTurn(true)) {
 								board.setCycle(true);
 							}
 						}else if(event.getMouseX()/ (100/(board.getSize()/10)) < board.getSize() & event.getMouseY()/(100/(board.getSize()/10)) < board.getSize()){
 							board.revive(event.getMouseX()/(100/(board.getSize()/10)), event.getMouseY()/(100/(board.getSize()/10)), board.getplayer(), true, false);
+							board.resetKillCount();
+							board.returnDebt();
+							board.returnDebt();
 						}else if(event.getMouseX() >= 1050 & event.getMouseX() <= 1441 & event.getMouseY() >= 800 & event.getMouseY() <= 929) {
 							canvas.setSplash(true);
 						} else if(event.getMouseX() >= 1100 & event.getMouseX() <= 1166 & event.getMouseY() >= 500 & event.getMouseY() <= 562 & board.isActive(1)) {

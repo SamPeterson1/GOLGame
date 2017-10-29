@@ -1,40 +1,44 @@
 package game;
 
+import java.util.ArrayList;
+
 public class AI {
 	GOLBoard board;
-	int[][] loaf = {
-			{0,0,0,0,0,0},
-			{0,0,0,0,0,0},
-			{0,0,2,2,0,0},
-			{0,0,2,2,0,0},
-			{0,0,0,0,0,0},
-			{0,0,0,0,0,0},
-	};
-	PatternFilter loafFilter = new PatternFilter(loaf, 2, 1, GOLBoard.REVIVE);
+	ArrayList<PatternFilter> filters = new ArrayList<PatternFilter>();
+	public void init() {
+		
+	}
 	public void makeMove() {
 		int[] location = this.findRevive();
 		Boolean madeMove = false;
 		int[] location2 = this.findKill(false, -10, -10, -10, -10);
-		if(loafFilter.checkForPattern(board.getSize(), board.get().clone())[0] == 1) {
-			int[] locationPattern = {loafFilter.checkForPattern(board.getSize(), board.get())[1], loafFilter.checkForPattern(board.getSize(), board.get())[2]};
-			if(loafFilter.getMode() == GOLBoard.REVIVE) {
-				int[] loc1 = this.findRevive();
-				board.revive(loafFilter.getCurrentFilterDissapationXY(locationPattern)[0], loafFilter.getCurrentFilterDissapationXY(locationPattern)[1], board.getplayer(), true, false);
-				board.kill(loc1[3], loc1[4], true, true, false);
-				board.kill(loc1[5], loc1[6], true, true, false);
-				madeMove = true;
-			} else {
-				board.kill(loafFilter.getCurrentFilterDissapationXY(locationPattern)[0], loafFilter.getCurrentFilterDissapationXY(locationPattern)[1], false, true, false);
-				madeMove = true;
+		for(PatternFilter filter: filters) {
+			if(filter.checkForPattern(board.getSize(), board.get().clone())[0] == 1) {
+				int[] locationPattern = {filter.checkForPattern(board.getSize(), board.get())[1], filter.checkForPattern(board.getSize(), board.get())[2]};
+				if(filter.getMode() == GOLBoard.REVIVE) {
+					int[] loc1 = this.findRevive();
+					System.out.println(filter.getCurrentFilterDissapationXY(locationPattern)[0] + " lots of fun " + filter.getCurrentFilterDissapationXY(locationPattern)[1]);
+					board.revive(filter.getCurrentFilterDissapationXY(locationPattern)[0], filter.getCurrentFilterDissapationXY(locationPattern)[1], board.getplayer(), true, false);
+					board.resetKillCount();
+					board.kill(loc1[3], loc1[4], true, true, false);
+					board.resetKillCount();
+					board.kill(loc1[5], loc1[6], true, true, false);
+					madeMove = true;
+				} else {
+					board.kill(filter.getCurrentFilterDissapationXY(locationPattern)[0], filter.getCurrentFilterDissapationXY(locationPattern)[1], false, true, false);
+					madeMove = true;
+				}
 			}
 		}
 		if(!madeMove & location[0] > location2[0]) {
 			board.revive(location[1], location[2], board.getplayer(), true, false);
 			board.kill(location[3], location[4], true, true, false);
 			board.kill(location[5], location[6], true, true, false);
+			System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL3");
 			System.out.println("REVIVE");
 		} else if(!madeMove){
 			board.kill(location2[1], location2[2], true, true, false);
+			System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL4");
 		}
 		//board.endTurn(false);
 		//board.setCycle(true);
@@ -46,7 +50,6 @@ public class AI {
 		int[][] research = new int[board.getSize() * board.getSize()][3]; //contains the findings of each iteration of the loop
 		for(int i = 0; i < board.getSize(); i ++) {
 			for(int j = 0; j < board.getSize(); j ++) {
-				System.out.println("THINKING....");
 				//Checks to see if move is logical
 				int[][] calculate = board.get().clone(); // a backup for the board after AI calculates many moves ahead
 				if(i != dontKillX & j != dontKillY & board.getBoard(i, j) != board.getplayer() & board.getBoard(i, j) != 0 & !ownCell | i != dontKillX & j != dontKillY & i != dontKillX2 & j != dontKillY2 & board.getBoard(i, j) == board.getplayer() & board.getBoard(i, j) != 0 & ownCell ) {
@@ -81,7 +84,6 @@ public class AI {
 		int[] retval = new int[3];
 		for(int i = 0; i < board.getSize() * board.getSize(); i ++) {
 			if(research[i][0] > currentMax) {
-				System.out.println(currentMax + "Sp");
 				currentMax = research[i][0];
 				System.out.println(currentMax);
 				retval[1] = research[i][1];
@@ -94,7 +96,6 @@ public class AI {
 		int[][] research = new int[400][7]; //contains the findings of each iteration of the loop
 		for(int i = 0; i < board.getSize(); i ++) {
 			for(int j = 0; j < board.getSize(); j ++) {
-				System.out.println("THINKING");
 				//Checks to see if move is logical
 				int[][] calculate = board.get().clone();
 				if(board.getBoard(i, j) == 0) {

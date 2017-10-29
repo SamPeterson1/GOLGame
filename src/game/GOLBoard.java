@@ -13,7 +13,7 @@ public class GOLBoard {
 	private Image grayRedo = new ImageIcon(getClass().getResource("/assets/GrayRedo.png")).getImage();
 	private Image currentImageUndo = grayUndo;
 	private Image currentImageRedo = grayRedo;
-	private int player = 0;
+	private int player = 1;
 	private int debt = 0;
 	private int killCount = 0;
 	private int reviveCount = 0;
@@ -31,7 +31,7 @@ public class GOLBoard {
 	private boolean isAdmin = false;
 	private int winPoint = 0;
 	private int winMode = 0;
-	private int winBlue = 1;
+	private int winBlue = 0;
 	private int winRed = 0 ;
 	private int[] lastMove = {0,0,0,0}; //x y (kill/revive) color
 	private int[][]board = {
@@ -59,12 +59,12 @@ public class GOLBoard {
 	private int[][] request = {
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0},
-			{2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-			{2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -569,7 +569,31 @@ REVIVE PREDICTED4 3
 REVIVE PREDICTED3 4
 REVIVE PREDICTED4 4
 2 2
-*/
+*/	public void cycleTestLife(int[][]matrix) {
+	int[][] neighbors = new int[matrix.length][matrix.length];
+	int[][] toBe = new int[matrix.length][matrix.length];
+	Integer[] q = {0,0,0,0};
+	for(int i = 0; i < matrix.length; i ++) {
+		for(int j = 0; j < matrix.length; j ++) {
+			toBe[j][i] = this.getNeighbor(i, j, true)[3];
+			q = this.getNeighbor(i, j, true).clone();
+			neighbors[j][i] = q[2];
+		}
+	}
+	for(int i = 0; i < matrix.length; i ++) {
+		for(int j = 0; j < matrix.length; j ++) {
+			if(neighbors[j][i] > 3) {
+				matrix[j][i] = 0;
+			}
+			else if(neighbors[j][i] < 2) {
+				matrix[j][i] = 0;
+			}
+			else if(neighbors[j][i] == 3) {
+				matrix[j][i] = toBe[j][i];
+			}
+		}
+	}
+	}
 	public void cycleLife() {
 		int[][] neighbors = {
 				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},

@@ -5,11 +5,13 @@ public class PatternFilter {
 	private int[] dissapateLocation = new int[3];
 	private int[][] dissapate = null;
 	private int mode = 0;
-	public PatternFilter(int[][] filter, int dissapateX, int dissapateY, int mode) {
+	private GOLBoard board;
+	public PatternFilter(int[][] filter, int dissapateX, int dissapateY, int mode, GOLBoard board) {
 		this.filter = filter;
 		dissapate = new int[filter.length][filter.length];
 		dissapate[dissapateY][dissapateX] = 1;
 		this.mode = mode;
+		this.board = board;
 	}
 	public int[] checkForPattern(int size, int[][] board) {
 		int retval[] = {0,0,0};
@@ -34,13 +36,13 @@ public class PatternFilter {
 							int x = i + a;
 							int y = j + b;
 							if(x >= 0 & x < size & y >= 0 & y < size) {
-								if(board[y][x] == filter[j - bound1][i - bound1] || filter[j - bound1][i - bound1] == 3) {
+								if(board[y][x] == filter[j - bound1][i - bound1] & this.board.getplayer() == 2|| filter[j - bound1][i - bound1] == 3 || board[y][x] == filter[j - bound1][i - bound1] * 2 & this.board.getplayer() == 1) {
 									retval[0] ++;
-									System.out.println("FOUND" + retval[0] + " " + ((bound2 - bound1) * (bound2 - bound1)));
+									System.out.println("LOLOLOLOLOLOLOLOOLOOLOL" + retval[0]);
 								}
 							} else {
 								retval[0] ++;
-								System.out.println("FOUND" + retval[0] + " " + ((bound2 - bound1) * (bound2 - bound1)));
+								System.out.println("LOLOLOLOLOLOLOLOOLOOLOL" + retval[0]);
 							}
 							if(retval[0] == ((bound2 - bound1) * (bound2 - bound1))) {
 								b2 = true;
@@ -53,7 +55,7 @@ public class PatternFilter {
 					}
 				}
 			}
-			if(retval[0] == ((bound2 - bound1) ^ 2)) {
+			if(retval[0] == ((bound2 - bound1) * (bound2 - bound1))) {
 				retval[0] = 1;
 				break;
 			} else {
@@ -79,16 +81,28 @@ public class PatternFilter {
 		return this.mode;
 	}
 	public int[] getCurrentFilterDissapationXY(int[] patternLocation) {
+		System.out.println(patternLocation[0] + "LOP" + patternLocation[1]);
 		int[] retval = {0,0};
 		int bound1 = -(filter.length/2);
-		for(int i = 0; i < filter.length; i ++) {
-			for(int j = 0; j < filter.length; j ++) {
-				if(dissapate[j][i] == 1) {
-					retval[0] = i;
-					retval[1] = j;
+		int runtimes = 0;
+		do{
+			for(int i = 0; i < filter.length; i ++) {
+				for(int j = 0; j < filter.length; j ++) {
+					if(dissapate[j][i] == 1) {
+						retval[0] = i;
+						retval[1] = j;
+					}
 				}
 			}
-		}
+			if(runtimes >= 1) {
+				System.out.println("HIII" + retval[0] + " " + retval[1]);
+				dissapate = this.rotate90(dissapate);
+			}
+			runtimes ++;
+			if(runtimes > 5) {
+				break;
+			}
+		} while(!(retval[0] + patternLocation[0] + bound1+ patternLocation[0] + bound1 >= 0 & retval[0] + patternLocation[0] + bound1 < board.getSize() & retval[1] + patternLocation[1] + bound1>= 0 & retval[1] + patternLocation[1] + bound1< board.getSize()));
 		retval[0] += patternLocation[0] + bound1;
 		retval[1] += patternLocation[1] + bound1;
 		return retval;
